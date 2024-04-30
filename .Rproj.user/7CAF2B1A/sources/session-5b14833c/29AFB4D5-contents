@@ -117,7 +117,8 @@ spec_curve = function(spec_data, decision_cols,
                                                                  linetype = 'dashed'),
                      legend.position = 'top') +
       ggplot2::labs(y = "Effect",
-                    caption = c('90% and 95% confidence intervals shown.'))
+                    caption = '90% and 95% confidence intervals shown.',
+                    fill = NULL)
   }
   p1 = p1 +
     ggplot2::theme(axis.text.x = ggplot2::element_blank(),
