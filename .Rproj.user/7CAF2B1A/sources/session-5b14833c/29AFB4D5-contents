@@ -113,7 +113,7 @@ spec_curve = function(spec_data, decision_cols,
     p1 = p1 +
       ggplot2::theme_classic() +
       ggplot2::theme(axis.title.y = ggplot2::element_text(angle = 0, hjust = 0, vjust = 1),
-                     panel.grid.major.y = ggplot2::element_line(linewidth = .25,
+                     panel.grid.major.y = ggplot2::element_line(linewidth = .75,
                                                                  linetype = 'dashed'),
                      legend.position = 'top') +
       ggplot2::labs(y = "Effect",
