@@ -130,6 +130,9 @@ spec_curve = function(spec_data, decision_cols,
     for (i in 1:length(decision_cols)) {
       p2dat[variable == decision_cols[i], variable := decision_labels[i]]
     }
+    p2dat[, variable := factor(variable, levels = rev(decision_labels))]
+  } else {
+    p2dat[, variable := factor(variable, levels = rev(decision_cols))]
   }
 
   if (is.null(color_text_labels)) {
