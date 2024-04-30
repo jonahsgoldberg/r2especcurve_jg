@@ -63,8 +63,10 @@ spec_curve = function(spec_data, decision_cols,
   if (!is.null(orig_spec_values)) {
     isorig = lapply(1:length(decision_cols),
                     \(x) dat[[decision_cols[x]]] == orig_spec_values[x])
-    for (i in 2:length(decision_cols)) {
-      isorig[[1]] = isorig[[1]]*isorig[[i]]
+    if (length(decision_cols) > 1) {
+      for (i in 2:length(decision_cols)) {
+        isorig[[1]] = isorig[[1]]*isorig[[i]]
+      }
     }
     dat[, Original := as.logical(isorig[[1]])]
   }
