@@ -11,7 +11,7 @@ If you are an R user, to use:
 
 If you are a Stata user and do not want to install R:
 
-1. Go to [RStudio Cloud](posit.cloud) and create a free account.
+1. Go to [RStudio Cloud](https://posit.cloud) and create a free account.
 2. Click New Project -> New RStudio project
 3. In the bottom-right panel, click "Upload" to upload your reproduction file which fits the R2E specifications. Note this assumes in particular that you effect is stored in a column called `beta` and your SEs in a column called `se` (case sensitive).
 4. Run the below code by copy/pasting it into the console (this will take a while as it needs to install some packages). Be sure to change the `revised_reproduction_output.dta` to match your own filename. Also note that this will open up a help file on the specification curve function that you can use to adjust it if you like.
