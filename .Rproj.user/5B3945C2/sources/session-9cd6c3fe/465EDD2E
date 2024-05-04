@@ -1,0 +1,26 @@
+{
+    "id": "465EDD2E",
+    "path": "~/GitHub/r2especcurve/R/spec_curve.R",
+    "project_path": "R/spec_curve.R",
+    "type": "r_source",
+    "hash": "2323482570",
+    "contents": "",
+    "dirty": false,
+    "created": 1714795792401.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "237,3",
+        "scrollLine": "226"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1714808894,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1714808894321,
+    "read_only": false,
+    "read_only_alternatives": []
+}

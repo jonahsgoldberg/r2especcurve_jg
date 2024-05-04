@@ -62,6 +62,7 @@ Output is a \code{ggplot2} graph, so graphical customization should be possible 
 data(cholera_dat)
 spec_curve(cholera_dat[cholera_dat$outcome == 3,],
   decision_cols = c('analytical_decision_1','analytical_decision_2','analytical_decision_3'),
-  decision_labels = c('Specification','Bandwidth','Controls'))
+  decision_labels = c('Specification','Bandwidth','Controls'),
+  orig_spec_values = c(1,1,1))
 
 }

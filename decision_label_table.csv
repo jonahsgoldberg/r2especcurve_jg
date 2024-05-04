@@ -1,0 +1,12 @@
+Specification Value,Specification Label,Bandwidth Value,Bandwidth Label,Controls Value,Controls Label
+1,"linear, no interaction",1,published,1,fewer controls
+2,"linear ,interaction",2,mserd,2,all controls
+3,"quadratic, no interaction",3,msetwo,"",""
+4,"quadratic, interaction",4,msesum,"",""
+"","",5,msecomb1,"",""
+"","",6,msecomb2,"",""
+"","",7,cerrd,"",""
+"","",8,certwo,"",""
+"","",9,cersum,"",""
+"","",10,cercomb1,"",""
+"","",11,cercomb2,"",""
