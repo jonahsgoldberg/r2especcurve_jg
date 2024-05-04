@@ -44,7 +44,7 @@ spec_curve(dat[dat$outcome == 'outcome 3',],
 
 6. Use the "Zoom" button to zoom in on the result, resize as you like, then right/command-click to save the image.
 7. Repeat with your other outcomes.
-8. You will notice that the analytical decision value below the table are indicated with numbers. If your data set contains labeled values from Stata, the values correspond to that labeling system. If your data set contains strings, the values have been set alphabetically. To create a table showing the correspondence between the values and the labels, use the below code (similarly change the `decision_cols` and `decision_labels` settings). This will save the table as a "decision_label_table.csv" CSV you can download by
+8. You will notice that the analytical decision value below the table are indicated with numbers. If your data set contains labeled values from Stata, the values correspond to that labeling system. If your data set contains strings, the values have been set alphabetically. To create a table showing the correspondence between the values and the labels, use the below code (similarly change the `decision_cols` and `decision_labels` settings). This will save the table as a "decision_label_table.csv" CSV. You can download this by: (a) in the bottom-right pane, clicking "Files", (b) clicking the checkbox by "decision_label_table.csv", (c) clicking the little gear icon to the top-right of the pane, (d) clicking "Export". Once you've downloaded it you can open it in Excel, copy it to Word, etc.
 
 ```
 decision_label_table(dat,
