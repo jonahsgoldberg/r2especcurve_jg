@@ -56,3 +56,4 @@ decision_label_table(dat,
                                'Controls'))
 ```
 							 
+9. As an additional note, if you want to add additional categories to the graph, for example original-paper robustness tests, you can do that with `additional_highlights_spec_values`, although the formatting is a bit complex. `additional_highlights_spec_values = list('Original Robustness' = list(c(1,2,1),c(2,1,1)))`, for example, would add an "Original Robustness" category for the analytic decision values 1, 2, 1 and 2, 1, 1. Or add multiple categories using multiple named lists, like `list('Original Robustness' = list(c(1,2,1),c(2,1,1), 'Placebo' = list(c(3,2,2,))))`. Similar to using `orig_beta_se` instead of `orig_spec_values`, you can use `additional_highlights_beta_se` instead of `additional_highlights_spec_values` by spcecifying the beta and se values you want instead of the original analytic decisions.

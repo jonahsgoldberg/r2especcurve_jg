@@ -18,6 +18,8 @@
 #' @param color_text_labels Use a gradient color scale for the text labels (requires numeric analytic decision columns). Set to \code{TRUE} to include, or to a \code{ggplot2::scale_color} function to specify your own color scale.
 #' @param height_ratio The ratio of the top plot to the bottom plot.
 #' @param return_separate Return two ggplots separately in a list so you can combine them yourself.
+#' @param additional_highlights_spec_values A named list of named lists, including additional categories to highlight on the graph. The name of each list is the name of the category, and the list contains vectors indicating the values to highlight, in the same form as \code{orig_spec_values}. For example, setting this to \code{list('Orig. Robustness' = list(c(1,1,2),c(1,1,3)), 'Comparative' = list(c(1,2,1)))} would add two new colors to the graph, one for "Orig. Robustness", for the analytic decision values 1, 1, 2 and 1, 1, 3, and one for "Comparative" for the original values 1, 2, 1.
+#' @param additional_highlights_beta_se The same as \code{additional_highlights_spec_values} but instead of accepting vectors for original analytic decision values, takes \code{c(beta, se)} vectors of exact effects to add.
 #' @examples
 #'
 #' # Example data
@@ -39,7 +41,9 @@ spec_curve = function(spec_data, decision_cols,
                       font_size = 8,
                       color_text_labels = NULL,
                       height_ratio = c(4,1),
-                      return_separate = FALSE) {
+                      return_separate = FALSE,
+                      additional_highlights_spec_values = NULL,
+                      additional_highlights_beta_se = NULL) {
   takennames = c('ci90_bot','ci90_top','ci95_bot','ci95_top',
                  'order','Original')
   if (any(takennames %in% names(spec_data))) {
@@ -54,13 +58,16 @@ spec_curve = function(spec_data, decision_cols,
       stop('decision_labels and decision_cols must have the same length.')
     }
   }
+  if (!is.null(orig_beta_se) & !is.null(orig_spec_values)) {
+    stop('Please only specify one of orig_beta_se and orig_spec_values')
+  }
+  if (!is.null(additional_highlights_spec_values) & !is.null(additional_highlights_beta_se)) {
+    stop('Please only specify one of additional_highlights_spec_values and additional_highlights_beta_se')
+  }
 
   dat = as.data.table(spec_data)
   setnames(dat,beta,'beta')
   setnames(dat,se,'se')
-  if (!is.null(orig_beta_se) & !is.null(orig_spec_values)) {
-    stop('Please only specify one of orig_beta_se and orig_spec_values')
-  }
 
   # Recast the analytical decisions as numeric
   for (i in 1:length(decision_cols)) {
@@ -99,12 +106,59 @@ spec_curve = function(spec_data, decision_cols,
     dat = rbind(dat, origspec, fill = TRUE)
   }
 
+
+  newpal = c('#00BDD0','salmon', "#D95F02","#7570B3","#E7298A","#66A61E","#E6AB02","#A6761D","#666666","#1B9E77")
+  newlabs = c('Variant','Original')
+  lettertrack = 2
+  if (!is.null(additional_highlights_spec_values)) {
+    dat[, Original := fifelse(Original, 'B', 'A')]
+    for (i in 1:length(additional_highlights_spec_values)) {
+      lettertrack = lettertrack + 1
+      thiscat = names(additional_highlights_spec_values)[i]
+      newlabs = c(newlabs, thiscat)
+      for (j in 1:length(additional_highlights_spec_values[[i]])) {
+        isorig = lapply(1:length(decision_cols),
+                        \(k) dat[[decision_cols[k]]] == additional_highlights_spec_values[[i]][[j]][k])
+        if (length(decision_cols) > 1) {
+          for (k in 2:length(decision_cols)) {
+            isorig[[1]] = isorig[[1]]*isorig[[k]]
+          }
+        }
+        dat[, Original := fifelse(as.logical(isorig[[1]]), LETTERS[lettertrack], Original)]
+      }
+    }
+  }
+  if (!is.null(additional_highlights_beta_se)) {
+    dat[, Original := fifelse(Original, 'B', 'A')]
+    for (i in 1:length(additional_highlights_beta_se)) {
+      lettertrack = lettertrack + 1
+      thiscat = names(additional_highlights_beta_se)[i]
+      newlabs = c(newlabs, thiscat)
+      thisspec = data.table(beta = additional_highlights_beta_se[[i]][[1]][1],
+                            se = additional_highlights_beta_se[[i]][[1]][2])
+      if (length(additional_highlights_beta_se[[i]]) > 1) {
+        for (j in 2:length(additional_highlights_beta_se[[i]])) {
+          thisspec = rbind(thisspec, data.table(beta = additional_highlights_beta_se[[i]][[j]][1],
+                                                 se = additional_highlights_beta_se[[i]][[j]][2]))
+        }
+      }
+      for (j in 1:length(decision_cols)) {
+        thisspec[[decision_cols[j]]] = 0
+      }
+      thisspec = copy(thisspec)
+      thisspec[, Original := LETTERS[lettertrack]]
+      dat = rbind(dat, thisspec, fill = TRUE)
+    }
+  }
+  newpal = newpal[1:length(newlabs)]
+
   dat[, ci90_bot := beta - 1.65*se]
   dat[, ci90_top := beta + 1.65*se]
   dat[, ci95_bot := beta - 1.96*se]
   dat[, ci95_top := beta + 1.96*se]
   setorder(dat, beta)
   dat[, order := 1:.N]
+
 
   p1 = ggplot2::ggplot(dat, ggplot2::aes(x = order, y = beta,
                   ymin = ci95_bot, ymax = ci95_top,
@@ -115,14 +169,16 @@ spec_curve = function(spec_data, decision_cols,
                        ggplot2::aes(ymin = ci90_bot, ymax = ci90_top)) +
     ggplot2::geom_point(size = 1, color = 'black',
                         show.legend = FALSE)+
-    ggplot2::scale_fill_manual(values = c('#00BDD0','salmon'),
-                               labels = c('Variant','Original'))
+    ggplot2::scale_fill_manual(values = newpal,
+                               labels = newlabs)
   if (!is.null(add_hline_at)) {
     p1 = p1 + ggplot2::geom_hline(yintercept = add_hline_at,
                                   color = 'black')
   }
-  if (sum(dat$Original) == 0) {
-    p1 = p1 + ggplot2::guides(fill = 'none')
+  if (is.logical(dat$Original)) {
+    if (sum(dat$Original) == 0) {
+      p1 = p1 + ggplot2::guides(fill = 'none')
+    }
   }
 
 
