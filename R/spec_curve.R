@@ -12,6 +12,7 @@
 #' @param orig_beta_se A two-element vector containing the original specification's beta and SE values. To be used if the original specification is not in the data. Will assign analytical decision values of 0 unless \code{orig_spec_values} is also specified.
 #' @param orig_spec_values A vector with the same length as \code{decision_cols} with the values that correspond to the original analysis.
 #' @param left_box Width of y-axis title area
+#' @param ylim A two-element vector that limits the y-axis with effect size. Set to \code{NULL} to use full range of estimates.
 #' @param add_hline_at Add a horizontal line at this value. Set to \code{NULL} to omit.
 #' @param skip_theme Don't apply the package theme, instead use \code{ggplot2} defaults.
 #' @param font_size Set font size in points for the variant box at bottom.
@@ -36,6 +37,7 @@ spec_curve = function(spec_data, decision_cols,
                       orig_beta_se = NULL,
                       orig_spec_values = NULL,
                       left_box = 50,
+                      ylim = NULL,
                       add_hline_at = 0,
                       skip_theme = FALSE,
                       font_size = 8,
@@ -170,7 +172,9 @@ spec_curve = function(spec_data, decision_cols,
     ggplot2::geom_point(size = 1, color = 'black',
                         show.legend = FALSE)+
     ggplot2::scale_fill_manual(values = newpal,
-                               labels = newlabs)
+                               labels = newlabs) +
+    ggplot2::coord_cartesian(ylim=ylim)
+
   if (!is.null(add_hline_at)) {
     p1 = p1 + ggplot2::geom_hline(yintercept = add_hline_at,
                                   color = 'black')
