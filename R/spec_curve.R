@@ -9,7 +9,7 @@
 #' @param beta String variable indicating the column with the effect of interest.
 #' @param se String variable indicating the column with the standard error.
 #' @param decision_labels String vector with the names of the analytical decisions, if not the column names themselves.
-#' @param orig_beta_se A two-element vector containing the original specification's beta and SE values. To be used if the original specification is not in the data. Will assign analytical decision values of 0 unless \code{orig_spec_values} is also specified.
+#' @param orig_beta_se A three-element vector containing the original specification's beta, SE, and CV values. To be used if the original specification is not in the data. Will assign analytical decision values of 0 unless \code{orig_spec_values} is also specified.
 #' @param orig_spec_values A vector with the same length as \code{decision_cols} with the values that correspond to the original analysis.
 #' @param left_box Width of y-axis title area
 #' @param ylim A two-element vector that limits the y-axis with effect size. Set to \code{NULL} to use full range of estimates.
@@ -32,7 +32,7 @@
 #'
 #' @export
 spec_curve = function(spec_data, decision_cols,
-                      beta = 'beta', se = 'se',
+                      beta = 'beta', se = 'se', cv = 'cv',
                       decision_labels = NULL,
                       orig_beta_se = NULL,
                       orig_spec_values = NULL,
@@ -70,6 +70,7 @@ spec_curve = function(spec_data, decision_cols,
   dat = as.data.table(spec_data)
   setnames(dat,beta,'beta')
   setnames(dat,se,'se')
+  setnames(dat,cv,'cv')
 
   # Recast the analytical decisions as numeric
   for (i in 1:length(decision_cols)) {
@@ -98,7 +99,8 @@ spec_curve = function(spec_data, decision_cols,
       orig_spec_values = rep(0,length(decision_cols))
     }
     origspec = data.table(beta = orig_beta_se[1],
-                          se = orig_beta_se[2])
+                          se = orig_beta_se[2],
+                          cv = orig_beta_se[3])
     for (i in 1:length(orig_spec_values)) {
       origspec[[decision_cols[i]]] = orig_spec_values[i]
     }
@@ -164,7 +166,7 @@ spec_curve = function(spec_data, decision_cols,
                   ymin = ci95_bot, ymax = ci95_top,
                   xmin = order - .5, xmax = order + .5,
                   fill = Original)) +
-    ggplot2::geom_rect(alpha = .2) +
+    ggplot2::geom_rect(alpha = .4) +
     ggplot2::geom_point(size = 1, color = 'black',
                         show.legend = FALSE)+
     ggplot2::scale_fill_manual(values = newpal,
