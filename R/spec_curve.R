@@ -46,7 +46,7 @@ spec_curve = function(spec_data, decision_cols,
                       return_separate = FALSE,
                       additional_highlights_spec_values = NULL,
                       additional_highlights_beta_se = NULL) {
-  takennames = c('ci90_bot','ci90_top','ci95_bot','ci95_top',
+  takennames = c('ci95_bot','ci95_top',
                  'order','Original')
   if (any(takennames %in% names(spec_data))) {
     stop(paste0('You cannot have the following column names in your data: ',
@@ -154,10 +154,8 @@ spec_curve = function(spec_data, decision_cols,
   }
   newpal = newpal[1:length(newlabs)]
 
-  dat[, ci90_bot := beta - 1.65*se]
-  dat[, ci90_top := beta + 1.65*se]
-  dat[, ci95_bot := beta - 1.96*se]
-  dat[, ci95_top := beta + 1.96*se]
+  dat[, ci95_bot := beta - cv*se]
+  dat[, ci95_top := beta + cv*se]
   setorder(dat, beta)
   dat[, order := 1:.N]
 
@@ -167,8 +165,6 @@ spec_curve = function(spec_data, decision_cols,
                   xmin = order - .5, xmax = order + .5,
                   fill = Original)) +
     ggplot2::geom_rect(alpha = .2) +
-    ggplot2::geom_rect(alpha = .5,
-                       ggplot2::aes(ymin = ci90_bot, ymax = ci90_top)) +
     ggplot2::geom_point(size = 1, color = 'black',
                         show.legend = FALSE)+
     ggplot2::scale_fill_manual(values = newpal,
@@ -194,7 +190,7 @@ spec_curve = function(spec_data, decision_cols,
                                                                  linetype = 'dashed'),
                      legend.position = 'top') +
       ggplot2::labs(y = "Effect",
-                    caption = '90% and 95% confidence intervals shown.',
+                    caption = '95% confidence intervals shown.',
                     fill = NULL)
   }
   p1 = p1 +
